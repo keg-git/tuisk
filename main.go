@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"tuisk/tui"
-	"tuisk/data"
 	tea "github.com/charmbracelet/bubbletea"
 
 )

@@ -1,28 +1,26 @@
-package tea
+package tui
 
 import (
 	"fmt"
+	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-type model struct {
-	choices []string
-	cursor	int
-	selected map[int]struct{}
+type Model struct {
+	table table.Model
+	pending []task
 }
 
-func InitialModel() model {
-	return model{
-		choices: []string{"Buy carrots", "Buy celery", "buy kohlrabi"},
-		selected: make(map[int]struct{}),
-	}
+func InitialModel() Model {
+	return m.GetTasks()
 }
 
-func (m model) Init() tea.Cmd {
+
+func (m Model) Init() tea.Cmd {
 	return nil
 }
 
-func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
@@ -51,7 +49,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
-func (m model) View() string {
+func (m Model) View() string {
     // The header
     s := "What should we buy at the market?\n\n"
 
