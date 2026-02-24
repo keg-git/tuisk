@@ -27,18 +27,30 @@ func (m Model) GetTasks() {
 	}
 
 	err = json.Unmarshal(out, m.pending)
+
+	columns := []table.Column{
+		{Title: "ID", Width: 3},
+		{Title: "Description", Width: 30},
+		{Title: "Pri", Width: 3},
+		{Title: "Urg", Width: 3},
+		{Title: "tags", Width: 50},
+	}
+
+	for task, i := range m.pending {
+		
+	}
 }
 
-func (m Model) MarkDone(id string) Model {
+func (m Model) MarkDone(id string) {
 
 }
 
 // we need name due date* priority* tags* description*
-func (m Model) CreateTask() Model {
+func (m Model) CreateTask() {
 
 }
 
 // gonna need the id along with what needs to be modified
-func (m Model) ModifyTask() Model {
+func (m Model) ModifyTask() {
 
 }

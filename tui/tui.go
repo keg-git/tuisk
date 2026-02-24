@@ -9,12 +9,15 @@ import (
 type Model struct {
 	table table.Model
 	pending []task
+	rows []table.Row
 }
 
 func InitialModel() Model {
-	return m.GetTasks()
-}
+    var m Model
+	m.GetTasks()
 
+	return m
+}
 
 func (m Model) Init() tea.Cmd {
 	return nil
