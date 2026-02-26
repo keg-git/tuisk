@@ -1,9 +1,11 @@
 package tui
 
 import (
-	"fmt"
+	// "fmt"
+
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 )
 
 type Model struct {
@@ -15,6 +17,18 @@ type Model struct {
 func InitialModel() Model {
     var m Model
 	m.GetTasks()
+
+	s := table.DefaultStyles()
+    s.Header = s.Header.
+        BorderStyle(lipgloss.NormalBorder()).
+        BorderForeground(lipgloss.Color("240")).
+        BorderBottom(true).
+        Bold(true)
+    s.Selected = s.Selected.
+        Foreground(lipgloss.Color("229")).
+        Background(lipgloss.Color("57")).
+        Bold(false)
+    m.table.SetStyles(s)
 
 	return m
 }
@@ -30,54 +44,23 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "ctrl+c", "q":
 			return m, tea.Quit
 
-		case "up", "k":
-			if m.cursor > 0 {
-				m.cursor--
-			}
-
-		case "down", "j":
-			if m.cursor < len(m.choices)-1 {
-				m.cursor++
-			}
-
-		case "enter", " ":
-			_, ok := m.selected[m.cursor]
-			if ok {
-				delete(m.selected, m.cursor)
-			} else {
-				m.selected[m.cursor] = struct{}{}
-			}
+		// case "up", "k":
+		// 	if m.table.Cursor() > 0 {
+		// 		m.table.SetCursor(m.table.Cursor()-1)
+		// 	}
+		//
+		// case "down", "j":
+		// 	if m.table.Cursor() < len(m.rows)-1 {
+		// 		m.table.SetCursor(m.table.Cursor()+1)
+		// 	}
 		}
 	}
-	return m, nil
+
+	var cmd tea.Cmd
+	m.table, cmd = m.table.Update(msg)
+	return m, cmd
 }
 
 func (m Model) View() string {
-    // The header
-    s := "What should we buy at the market?\n\n"
-
-    // Iterate over our choices
-    for i, choice := range m.choices {
-
-        // Is the cursor pointing at this choice?
-        cursor := " " // no cursor
-        if m.cursor == i {
-            cursor = ">" // cursor!
-        }
-
-        // Is this choice selected?
-        checked := " " // not selected
-        if _, ok := m.selected[i]; ok {
-            checked = "x" // selected!
-        }
-
-        // Render the row
-        s += fmt.Sprintf("%s [%s] %s\n", cursor, checked, choice)
-    }
-
-    // The footer
-    s += "\nPress q to quit.\n"
-
-    // Send the UI for rendering
-    return s
+	return m.table.View() + "\n"
 }
