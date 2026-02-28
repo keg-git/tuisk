@@ -64,13 +64,15 @@ func GetTasks(m *Model) {
 
 }
 
-func (m *Model) MarkDone(id string) {
+func MarkDone(id string, m *Model) Error {
 	cmd := exec.Command("task", id, "done")
 
 	_, err := cmd.Output()
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
+
+
 }
 
 // we need name due date* priority* tags* description*
