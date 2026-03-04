@@ -11,13 +11,13 @@ import (
 )
 
 type task struct {
-	Id 			int			`json:"id"`
-	Age	 		string		`json:"age"`
-	Tags 		[]string	`json:"tags"`
-	Due 		string		`json:"due"`  // this comes out to be a weird number gonna have to figure that one out
-	Description	string		`json:"description"`
-	Priority	string		`json:"priority"`
-	Urgency 	float64		`json:"urgency"`
+	Id          int      `json:"id"`
+	Age         string   `json:"age"`
+	Tags        []string `json:"tags"`
+	Due         string   `json:"due"` // this comes out to be a weird number gonna have to figure that one out
+	Description string   `json:"description"`
+	Priority    string   `json:"priority"`
+	Urgency     float64  `json:"urgency"`
 }
 
 func (m *Model) GetTasks() {
@@ -52,15 +52,15 @@ func (m *Model) GetTasks() {
 			task.Priority,
 			strconv.FormatFloat(task.Urgency, 'f', 2, 64),
 			tags,
-		})	
+		})
 	}
 
-	m.table = table.New(
+	m.Table = table.New(
 		table.WithColumns(columns),
 		table.WithRows(m.rows),
 		table.WithFocused(true),
 		table.WithHeight(10),
-		)
+	)
 
 }
 

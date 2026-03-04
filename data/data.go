@@ -6,7 +6,7 @@ import (
 	"log"
 	"os/exec"
 	"strconv"
-
+	"tuisk/tui"
 	"github.com/charmbracelet/bubbles/table"
 )
 
@@ -20,7 +20,7 @@ type task struct {
 	Urgency 	float64		`json:"urgency"`
 }
 
-func GetTasks(m *Model) {
+func GetTasks(m *tui.Model) {
 	cmd := exec.Command("task", "status:pending", "export")
 
 	out, err := cmd.Output()
@@ -64,7 +64,7 @@ func GetTasks(m *Model) {
 
 }
 
-func MarkDone(id string, m *Model) Error {
+func MarkDone(id string, m *tui.Model) {
 	cmd := exec.Command("task", id, "done")
 
 	_, err := cmd.Output()
@@ -76,11 +76,11 @@ func MarkDone(id string, m *Model) Error {
 }
 
 // we need name due date* priority* tags* description*
-func (m *Model) CreateTask() {
+func (m *tui.Model) CreateTask() {
 
 }
 
 // gonna need the id along with what needs to be modified
-func (m *Model) ModifyTask() {
+func (m *tui.Model) ModifyTask() {
 
 }
