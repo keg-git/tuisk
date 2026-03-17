@@ -5,12 +5,9 @@ import (
 	// "fmt"
 	"log"
 	"os/exec"
-	"strconv"
-	"tuisk/tui"
-	"github.com/charmbracelet/bubbles/table"
 )
 
-type task struct {
+type Task struct {
 	Id 			int			`json:"id"`
 	Age	 		string		`json:"age"`
 	Tags 		[]string	`json:"tags"`
@@ -20,7 +17,9 @@ type task struct {
 	Urgency 	float64		`json:"urgency"`
 }
 
-func GetTasks(m *tui.Model) {
+func GetTasks() []Task {
+
+	var tasks []Task
 	cmd := exec.Command("task", "status:pending", "export")
 
 	out, err := cmd.Output()
@@ -28,43 +27,15 @@ func GetTasks(m *tui.Model) {
 		log.Fatal(err)
 	}
 
-	err = json.Unmarshal(out, &m.pending)
+	err = json.Unmarshal(out, &tasks)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	columns := []table.Column{
-		{Title: "ID", Width: 3},
-		{Title: "Description", Width: 30},
-		{Title: "Priority", Width: 8},
-		{Title: "Urgency", Width: 7},
-		{Title: "tags", Width: 50},
-	}
-
-	for _, task := range m.pending {
-		var tags string
-		for _, tag := range task.Tags {
-			tags += tag + " "
-		}
-		m.rows = append(m.rows, table.Row{
-			strconv.Itoa(task.Id),
-			task.Description,
-			task.Priority,
-			strconv.FormatFloat(task.Urgency, 'f', 2, 64),
-			tags,
-		})	
-	}
-
-	m.table = table.New(
-		table.WithColumns(columns),
-		table.WithRows(m.rows),
-		table.WithFocused(true),
-		table.WithHeight(10),
-		)
-
+	return tasks
 }
 
-func MarkDone(id string, m *tui.Model) {
+func MarkDone(id string) error {
 	cmd := exec.Command("task", id, "done")
 
 	_, err := cmd.Output()
@@ -72,15 +43,17 @@ func MarkDone(id string, m *tui.Model) {
 		return err
 	}
 
-
+	return nil
 }
 
 // we need name due date* priority* tags* description*
-func (m *tui.Model) CreateTask() {
+func CreateTask(task Task) error {
 
+	return nil
 }
 
 // gonna need the id along with what needs to be modified
-func (m *tui.Model) ModifyTask() {
+func ModifyTask(id string, category string, value string) error {
 
+	return nil
 }
