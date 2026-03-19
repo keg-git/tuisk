@@ -49,11 +49,42 @@ func MarkDone(id string) error {
 // we need name due date* priority* tags* description*
 func CreateTask(task Task) error {
 
+	var due string
+	var prior string
+	var tags string
+
+	if task.Due != "" {
+		due = "due:" + task.Due
+	}
+
+	if task.Priority != "" {
+		prior = "priority:" + task.Priority
+	}
+
+	for _,t := range task.Tags {
+		tags = " +" + t
+	}
+
+	cmd := exec.Command("task", "add", due, prior, tags, task.Description)
+
+	_, err := cmd.Output()
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
 // gonna need the id along with what needs to be modified
 func ModifyTask(id string, category string, value string) error {
+
+	mod := category + ":" + value
+	cmd := exec.Command("task", id, "modify", mod)
+
+	_, err := cmd.Output()
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
