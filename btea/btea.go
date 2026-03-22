@@ -13,12 +13,17 @@ import (
 
 type Model struct {
 	Table table.Model
+	addForm form
+	width int
+	height int
 }
 
 func ModelInit() Model {
 	var m Model
 	m.UpdateModel() 
 	m.GlossTable()
+
+	m.addForm.initAddForm()
 
 	return m
 }
@@ -81,19 +86,39 @@ func (m *Model) Init() tea.Cmd {
 }
 
 func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	var cmdTable tea.Cmd
+	m.Table, cmdTable = m.Table.Update(msg)
+
+	var cmdForm1 tea.Cmd
+	m.addForm, cmdForm1 = m.addForm.Update(msg)
+
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+c", "q":
 			return m, tea.Quit
+		case "a":
+			m.addForm.show = true
 		}
+	case tea.WindowSizeMsg:
+		m.width = msg.Width
+		m.height = msg.Height
+
+		m.Table.SetWidth(msg.Width - 4)
+		m.Table.SetHeight(msg.Height - 6)
 	}
 
-	var cmd tea.Cmd
-	m.Table, cmd = m.Table.Update(msg)
-	return m, cmd
+	return m, tea.Batch(cmdTable, cmdForm1)
 }
 
 func (m *Model) View() string {
-	return m.Table.View() + "\n"
+
+	stack := lipgloss.JoinVertical(lipgloss.Left, m.Table.View(), m.addForm.View())
+	return lipgloss.Place(
+		m.width,
+		m.height,
+		lipgloss.Center,
+		lipgloss.Center,
+		stack,
+	)
 }
