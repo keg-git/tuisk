@@ -1,7 +1,7 @@
 package btea
 
 import (
-	"fmt"
+	// "fmt"
 
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
@@ -38,14 +38,29 @@ func (f form) Update(msg tea.Msg) (form, tea.Cmd) {
 		switch msg.String() {
 		case "esc":
 			f.show = false
-			fmt.Print("escape press")
 			return f, cmd
 		case "ctrl+c":
 			return f, tea.Quit
+		case "tab":
+			f.form[f.index].Blur()
+			f.index = (f.index+1) % len(f.form)
+			f.form[f.index].Focus()
+			return f, cmd
+		case "shift+tab":
+			f.form[f.index].Blur()
+			if f.index > 0 {
+				f.index--
+			} else {
+				f.index = len(f.form)-1
+			}
+			f.form[f.index].Focus()
+			return f, cmd
 		}
 	case tea.WindowSizeMsg:
 		f.width = msg.Width
 	}
+
+	f.form[f.index], cmd = f.form[f.index].Update(msg)
 
 	return f, cmd
 }

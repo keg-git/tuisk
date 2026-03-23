@@ -86,11 +86,12 @@ func (m *Model) Init() tea.Cmd {
 }
 
 func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	var cmdTable tea.Cmd
-	m.Table, cmdTable = m.Table.Update(msg)
+	var cmd tea.Cmd
 
-	var cmdForm1 tea.Cmd
-	m.addForm, cmdForm1 = m.addForm.Update(msg)
+	if m.addForm.show {
+		m.addForm, cmd = m.addForm.Update(msg)
+		return m, cmd
+	}
 
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
@@ -102,13 +103,15 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	case tea.WindowSizeMsg:
 		m.width = msg.Width
-		m.height = msg.Height
+		// m.height = msg.Height
 
 		m.Table.SetWidth(msg.Width - 4)
-		m.Table.SetHeight(msg.Height - 6)
+		// m.Table.SetHeight(msg.Height - 6)
 	}
 
-	return m, tea.Batch(cmdTable, cmdForm1)
+	m.Table, cmd = m.Table.Update(msg)
+
+	return m, cmd
 }
 
 func (m *Model) View() string {
