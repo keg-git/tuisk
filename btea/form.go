@@ -1,12 +1,12 @@
 package btea
 
 import (
-	// "fmt"
+	"strings"
+	"tuisk/data"
 
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	// tea "github.com/charmbracelet/bubbletea"
 )
 
 type form struct {
@@ -14,6 +14,7 @@ type form struct {
 	index int
 	show bool
 	width int
+	formType string
 }
 
 func (f *form) View() string {
@@ -30,6 +31,8 @@ func (f *form) View() string {
 	return lipgloss.JoinVertical(lipgloss.Left, inputs...)
 }
 
+//result := "+" + strings.ReplaceAll(s, " ", " +")
+// result: "+hello +world +foo" this might work 
 
 func (f form) Update(msg tea.Msg) (form, tea.Cmd) {
 	var cmd tea.Cmd
@@ -65,9 +68,35 @@ func (f form) Update(msg tea.Msg) (form, tea.Cmd) {
 	return f, cmd
 }
 
+//result := "+" + strings.ReplaceAll(s, " ", " +")
+// result: "+hello +world +foo"  would of been cool be didn't work the way I wanted it to
+
+func (f *form) submitForm() {
+	switch f.formType {
+	case "create":
+		task := data.Task{
+			Description: f.form[0].Value(),
+			Priority: f.form[1].Value(),
+			Due: f.form[2].Value(),
+			Tags: strings.Split(f.form[2].Value(), " "),
+		}
+		data.CreateTask(task)
+
+	case "modify":
+
+	}
+
+	for i := range f.form {
+		f.form[i].SetValue("") 
+	}
+
+	f.show = false
+}
+
 func (f *form) initAddForm() {
 	f.index = 0
 	f.show = false
+	f.formType = "create"
 
 	desc := textinput.New()
 	desc.Placeholder = "Description"

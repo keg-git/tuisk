@@ -1,11 +1,9 @@
 package btea
 
 import (
-	// "fmt"
 	"strconv"
 	"strings"
 	"tuisk/data"
-
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -26,22 +24,6 @@ func ModelInit() Model {
 	m.addForm.initAddForm()
 
 	return m
-}
-
-func (m *Model) GlossTable() {
-
-	s := table.DefaultStyles()
-	s.Header = s.Header.
-		BorderStyle(lipgloss.NormalBorder()).
-		BorderForeground(lipgloss.Color("240")).
-		BorderBottom(true).
-		Bold(true)
-	s.Selected = s.Selected.
-		Foreground(lipgloss.Color("229")).
-		Background(lipgloss.Color("57")).
-		Bold(false)
-	m.Table.SetStyles(s)
-
 }
 
 func (m *Model) UpdateModel() {
@@ -86,6 +68,7 @@ func (m *Model) Init() tea.Cmd {
 }
 
 func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+
 	var cmd tea.Cmd
 
 	if m.addForm.show {

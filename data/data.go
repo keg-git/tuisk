@@ -1,10 +1,10 @@
 package data
 
 import (
-	"encoding/json"
-	// "fmt"
 	"log"
 	"os/exec"
+	"encoding/json"
+	"strings"
 )
 
 type Task struct {
@@ -51,7 +51,6 @@ func CreateTask(task Task) error {
 
 	var due string
 	var prior string
-	var tags string
 
 	if task.Due != "" {
 		due = "due:" + task.Due
@@ -61,9 +60,7 @@ func CreateTask(task Task) error {
 		prior = "priority:" + task.Priority
 	}
 
-	for _,t := range task.Tags {
-		tags = " +" + t
-	}
+	tags := "+" + strings.Join(task.Tags, " +")
 
 	cmd := exec.Command("task", "add", due, prior, tags, task.Description)
 
