@@ -1,6 +1,8 @@
 package btea
 
 import (
+	// "fmt"
+	"log"
 	"strings"
 	"tuisk/data"
 
@@ -15,6 +17,7 @@ type form struct {
 	show bool
 	width int
 	formType string
+	refresh bool
 }
 
 func (f *form) View() string {
@@ -58,6 +61,9 @@ func (f form) Update(msg tea.Msg) (form, tea.Cmd) {
 			}
 			f.form[f.index].Focus()
 			return f, cmd
+		case "enter":
+			f.submitForm()
+			return f, cmd
 		}
 	case tea.WindowSizeMsg:
 		f.width = msg.Width
@@ -78,9 +84,11 @@ func (f *form) submitForm() {
 			Description: f.form[0].Value(),
 			Priority: f.form[1].Value(),
 			Due: f.form[2].Value(),
-			Tags: strings.Split(f.form[2].Value(), " "),
+			Tags: strings.Split(strings.ReplaceAll(f.form[3].Value(), " ", " +"), " "),
 		}
-		data.CreateTask(task)
+		if err := data.CreateTask(task); err != nil {
+			log.Println(err)
+		}
 
 	case "modify":
 
@@ -91,11 +99,14 @@ func (f *form) submitForm() {
 	}
 
 	f.show = false
+	f.refresh = true
 }
 
 func (f *form) initAddForm() {
+
 	f.index = 0
 	f.show = false
+	f.refresh = false
 	f.formType = "create"
 
 	desc := textinput.New()
@@ -104,12 +115,12 @@ func (f *form) initAddForm() {
 	f.form = append(f.form, desc)
 
 	prior := textinput.New()
-	prior.Placeholder = "Priority"
+	prior.Placeholder = "Priority: H M L"
 	prior.Blur()
 	f.form = append(f.form, prior)
 
 	date := textinput.New()
-	date.Placeholder = "Due Date"
+	date.Placeholder = "Due Date: Y-M-D"
 	date.Blur()
 	f.form = append(f.form, date)
 

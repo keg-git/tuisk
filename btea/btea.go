@@ -18,6 +18,21 @@ type Model struct {
 
 func ModelInit() Model {
 	var m Model
+
+	columns := []table.Column {
+		{ Title: "ID", Width: 3 },
+		{ Title: "Description", Width: 30 },
+		{ Title: "Priority", Width: 8 },
+		{ Title: "Urgency", Width: 7 },
+		{ Title: "tags", Width: 50 },
+	}
+
+	m.Table = table.New(
+		table.WithColumns(columns),
+		table.WithFocused(true),
+		table.WithHeight(25),
+		)
+
 	m.UpdateModel() 
 	m.GlossTable()
 
@@ -29,14 +44,6 @@ func ModelInit() Model {
 func (m *Model) UpdateModel() {
 
 	tasks := data.GetTasks()
-
-	columns := []table.Column{
-		{Title: "ID", Width: 3},
-		{Title: "Description", Width: 30},
-		{Title: "Priority", Width: 8},
-		{Title: "Urgency", Width: 7},
-		{Title: "tags", Width: 50},
-	}
 
 	var rows []table.Row
 	for _, task := range tasks {
@@ -53,14 +60,7 @@ func (m *Model) UpdateModel() {
 		})
 	}
 
-
-	m.Table = table.New(
-		table.WithColumns(columns),
-		table.WithRows(rows),
-		table.WithFocused(true),
-		table.WithHeight(10),
-	)
-
+	m.Table.SetRows(rows)
 }
 
 func (m *Model) Init() tea.Cmd {
@@ -73,6 +73,10 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	if m.addForm.show {
 		m.addForm, cmd = m.addForm.Update(msg)
+		if m.addForm.refresh {
+			m.UpdateModel()
+			m.addForm.refresh = false
+		}
 		return m, cmd
 	}
 

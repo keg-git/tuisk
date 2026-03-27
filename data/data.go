@@ -1,9 +1,9 @@
 package data
 
 import (
+	"encoding/json"
 	"log"
 	"os/exec"
-	"encoding/json"
 	"strings"
 )
 
@@ -49,21 +49,61 @@ func MarkDone(id string) error {
 // we need name due date* priority* tags* description*
 func CreateTask(task Task) error {
 
-	var due string
-	var prior string
+	// var due string
+	// var prior string
+	// var tags string
+	//
+	// desc := "\"" + task.Description + "\""
+	//
+	// if task.Due != "" {
+	// 	due = "due:\"" + task.Due + "\""
+	// }
+	//
+	// if task.Priority != "" {
+	// 	prior = "priority:" + task.Priority
+	// }
+	//
+	// if len(task.Tags) > 0 {
+	// 	tags = "+" + strings.Join(task.Tags, " +")
+	// }
+	//
+	// command := "task add " + desc + " " + tags + " " + prior + " " + due
+	// log.Println(command)
+	//
+	// cmd := exec.Command("task", "add", desc, tags, prior, due)
+	//
+	// _, err := cmd.Output()
+	// if err != nil {
+	// 	return err
+	// }
 
-	if task.Due != "" {
-		due = "due:" + task.Due
+	desc := task.Description
+
+	// Build args slice
+	args := []string{"add", desc}
+
+	// Add tags
+	if len(task.Tags) > 0 {
+		for _, tag := range task.Tags {
+			args = append(args, tag)
+		}
 	}
 
+	// Add priority
 	if task.Priority != "" {
-		prior = "priority:" + task.Priority
+		args = append(args, "priority:"+task.Priority)
 	}
 
-	tags := "+" + strings.Join(task.Tags, " +")
+	// Add due date
+	if task.Due != "" {
+		args = append(args, "due:"+task.Due)
+	}
 
-	cmd := exec.Command("task", "add", due, prior, tags, task.Description)
+	// Log the full command for debugging
+	log.Println("task", strings.Join(args, " "))
 
+	// Execute
+	cmd := exec.Command("task", args...)
 	_, err := cmd.Output()
 	if err != nil {
 		return err
